@@ -11,26 +11,23 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsAsyncClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
-/**
- * Created by jt on 2019-08-07.
- */
 //@Component
 public class NIORestTemplateCustomizer implements RestTemplateCustomizer {
 
     public ClientHttpRequestFactory clientHttpRequestFactory() throws IOReactorException {
-        final DefaultConnectingIOReactor ioreactor = new DefaultConnectingIOReactor(IOReactorConfig.custom().
-                setConnectTimeout(3000).
-                setIoThreadCount(4).
-                setSoTimeout(3000).
-                build());
+        final DefaultConnectingIOReactor ioreactor = new DefaultConnectingIOReactor(IOReactorConfig.custom()
+            .setConnectTimeout(3000)
+            .setIoThreadCount(4)
+            .setSoTimeout(3000)
+            .build());
 
         final PoolingNHttpClientConnectionManager connectionManager = new PoolingNHttpClientConnectionManager(ioreactor);
         connectionManager.setDefaultMaxPerRoute(100);
         connectionManager.setMaxTotal(1000);
 
         CloseableHttpAsyncClient httpAsyncClient = HttpAsyncClients.custom()
-                .setConnectionManager(connectionManager)
-                .build();
+            .setConnectionManager(connectionManager)
+            .build();
 
         return new HttpComponentsAsyncClientHttpRequestFactory(httpAsyncClient);
 
